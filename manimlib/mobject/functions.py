@@ -65,6 +65,10 @@ class ParametricCurve(VMobject):
     def get_x_range(self):
         if hasattr(self, "x_range"):
             return self.x_range
+    
+    def set_x_range(self, x_range):
+        self.x_range = x_range
+        return self
 
 
 class FunctionGraph(ParametricCurve):
