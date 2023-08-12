@@ -89,7 +89,8 @@ ARROW_SYMBOLS: list[int] = list(range(65361, 65365))
 
 SHIFT_MODIFIER: int = 1
 CTRL_MODIFIER: int = 2
-COMMAND_MODIFIER: int = 64
+# COMMAND_MODIFIER: int = 64
+COMMAND_MODIFIER: int = 132
 
 # Colors
 
