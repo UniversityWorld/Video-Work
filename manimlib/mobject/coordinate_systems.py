@@ -436,6 +436,7 @@ class Axes(VGroup, CoordinateSystem):
         **kwargs
     ):
         CoordinateSystem.__init__(self, x_range, y_range, **kwargs)
+        kwargs.pop("num_sampled_graph_points_per_tick", None)
         VGroup.__init__(self, **kwargs)
 
         axis_config = dict(**axis_config, unit_size=unit_size)
@@ -534,7 +535,7 @@ class ThreeDAxes(Axes):
             axis_config=merge_dicts_recursively(
                 self.default_axis_config,
                 self.default_z_axis_config,
-                kwargs.get("axes_config", {}),
+                kwargs.get("axis_config", {}),
                 z_axis_config
             ),
             length=depth,
