@@ -75,28 +75,6 @@ float alpha_with_two_circle_isolated(vec3 point, vec3 center_s, vec3 center_b, f
     return alpha;
 }
 
-float[2] gradient_interpolate(float[37] gradient_scale, float alpha){
-	int index = 0;
-	for (int i = 0; i < 36; i++){
-		if (alpha == 1 && gradient_scale[i] <1 && gradient_scale[i+1] == 1){
-			index = i;
-            break;
-		}
-		else if (gradient_scale[i] <= alpha && alpha < gradient_scale[i+1]){
-			index = i;
-            break;
-		}
-	}
-	float color_alpha = 0.0;
-	if (gradient_scale[index] == gradient_scale[index + 1]){
-		color_alpha =1.0;
-	}
-	else{
-		color_alpha = clamp((alpha - gradient_scale[index])/(gradient_scale[index+1] - gradient_scale[index]) ,0,1);
-	}
-	return float[2](index, color_alpha);
-}
-
 int is_clip_in(vec3 point, float[7] clip_data){
     int is_in =1;
     int index = 6;

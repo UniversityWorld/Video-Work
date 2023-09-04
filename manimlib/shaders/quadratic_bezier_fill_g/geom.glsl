@@ -16,6 +16,7 @@ out float fill_all;
 out float orientation;
 // uv space is where the curve coincides with y = x^2
 out vec2 uv_coords;
+out vec3 xyz_coords;
 
 // A quadratic bezier curve with these points coincides with y = x^2
 const vec2 SIMPLE_QUADRATIC[3] = vec2[3](
@@ -40,6 +41,7 @@ void emit_triangle(vec3 points[3], vec4 v_color[3]){
 
     for(int i = 0; i < 3; i++){
         uv_coords = SIMPLE_QUADRATIC[i];
+        xyz_coords = points[i];
         color = finalize_color(v_color[i], points[i], unit_normal);
         emit_gl_Position(points[i]);
         EmitVertex();

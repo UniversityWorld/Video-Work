@@ -9,13 +9,13 @@ import io
 
 from manimlib.constants import RIGHT
 from manimlib.logger import log
-from manimlib.mobject.geometry import Circle
-from manimlib.mobject.geometry import Line
-from manimlib.mobject.geometry import Polygon
-from manimlib.mobject.geometry import Polyline
-from manimlib.mobject.geometry import Rectangle
-from manimlib.mobject.geometry import RoundedRectangle
-from manimlib.mobject.types.vectorized_mobject import VMobject
+from manimlib.mobject.svgc.geometry_c import Circle
+from manimlib.mobject.svgc.geometry_c import Line
+from manimlib.mobject.svgc.geometry_c import Polygon
+from manimlib.mobject.svgc.geometry_c import Polyline
+from manimlib.mobject.svgc.geometry_c import Rectangle
+from manimlib.mobject.svgc.geometry_c import RoundedRectangle
+from manimlib.mobject.svgc.vectorized_mobject import VMobject
 from manimlib.utils.directories import get_mobject_data_dir
 from manimlib.utils.images import get_full_vector_image_path
 from manimlib.utils.iterables import hash_obj

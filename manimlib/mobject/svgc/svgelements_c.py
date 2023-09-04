@@ -9069,7 +9069,6 @@ class SVG(Group):
 
                 # gradient style
                 if SVG_TAG_LINEARGRADIENT == tag:
-                    print(attributes)
                     if attributes[SVG_ATTR_ID] not in linearGradient:
                         gradient_id = attributes[SVG_ATTR_ID]
                         linearGradient[gradient_id] = {}
@@ -9334,7 +9333,6 @@ class SVG(Group):
 
                 if SVG_TAG_LINEARGRADIENT == tag:
                     linearGradient[gradient_id]["gradient_colors"] = gradient_data
-                    print(linearGradient)
 
                 s = None
                 if tag in (

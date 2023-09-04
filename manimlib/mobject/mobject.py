@@ -73,7 +73,6 @@ class Mobject(object):
     ])
     aligned_data_keys = ['point']
     pointlike_data_keys = ['point']
-    gradient = None
 
     def __init__(
         self,
@@ -253,14 +252,6 @@ class Mobject(object):
                     arr[:] = func(arr)
                 else:
                     arr[:] = func(arr - about_point) + about_point
-
-        if self.gradient is not None:
-            points = self.gradient[0]
-            for i in range(len(points)):
-                if about_point is None:
-                    self.gradient[0][i] = func(points[i])
-                else:
-                    self.gradient[0][i] = func(points[i] - about_point) + about_point
 
         if not works_on_bounding_box:
             self.refresh_bounding_box(recurse_down=True)

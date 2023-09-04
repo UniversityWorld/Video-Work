@@ -10,9 +10,9 @@ from manimlib.constants import GREY_A, RED, WHITE, BLACK
 from manimlib.constants import MED_SMALL_BUFF
 from manimlib.constants import DEGREES, PI, TAU
 from manimlib.mobject.mobject import Mobject
-from manimlib.mobject.types.vectorized_mobject import DashedVMobject
-from manimlib.mobject.types.vectorized_mobject import VGroup
-from manimlib.mobject.types.vectorized_mobject import VMobject
+from manimlib.mobject.svgc.vectorized_mobject import DashedVMobject
+from manimlib.mobject.svgc.vectorized_mobject import VGroup
+from manimlib.mobject.svgc.vectorized_mobject import VMobject
 from manimlib.utils.iterables import adjacent_n_tuples
 from manimlib.utils.iterables import adjacent_pairs
 from manimlib.utils.simple_functions import clip
