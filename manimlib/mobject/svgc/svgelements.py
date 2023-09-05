@@ -9026,6 +9026,7 @@ class SVG(Group):
         linearGradient = {}
         radiaGradient = {}
         stack = []
+        gradient_data = None
 
         values = {
             SVG_ATTR_COLOR: color,
@@ -9076,6 +9077,7 @@ class SVG(Group):
                             if key in ['gradientUnits', 'x1', 'y1', 'x2', 'y2']:
                                 linearGradient[gradient_id][key] = attributes[key]
                         gradient_data = []
+                        gradient_line = [(float(attributes['x1']), float(attributes['y1']), 0), (float(attributes['x2']), float(attributes['y2']), 0)]
                                         
                 if SVG_TAG_STOP == tag:
                     gradient_data.append([float(attributes['offset']), attributes["style"][11:]])
@@ -9270,6 +9272,15 @@ class SVG(Group):
                         if s is None:
                             # s was not established we continue without it.
                             continue
+                    try:
+                        if gradient_data is not None:
+                            setattr(s, "gradient_line", gradient_line)
+                            setattr(s, "gradient_data", gradient_data)
+                        else:
+                            setattr(s, "gradient_line", None)
+                            setattr(s, "gradient_data", None)
+                    except:
+                        pass
                     s.render(ppi=ppi, width=width, height=height)
                     if reify:
                         s.reify()
@@ -9322,6 +9333,8 @@ class SVG(Group):
                     if SVG_ATTR_ID in attributes and use == 0:
                         root.objects[attributes[SVG_ATTR_ID]] = s
             elif event == "end":  # End event.
+                if SVG_TAG_GROUP == tag:
+                    gradient_data = None
                 # The iterparse spec makes it clear that internal text data is undefined except at the end.
                 if (
                     SVG_ATTR_DISPLAY in values

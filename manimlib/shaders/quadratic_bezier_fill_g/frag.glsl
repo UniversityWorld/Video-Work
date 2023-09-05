@@ -2,6 +2,8 @@
 
 uniform bool winding;
 uniform vec3[2] gradient_line;
+uniform float[37] gradient_scale;
+uniform vec4[37] gradient_color;
 
 in vec4 color;
 in float fill_all;
@@ -13,7 +15,7 @@ out vec4 frag_color;
 
 #INSERT add_gradient.glsl
 
-vec2 gradient_interpolate(float[3] gradient_scale, float alpha) {
+vec2 gradient_interpolate(float[37] gradient_scale, float alpha) {
     int index = 0;
     for (int i = 0; i < 37; i++) {
         if (alpha <= gradient_scale[i]) {
@@ -35,9 +37,6 @@ void main() {
     else{
         float alpha = 0.0; 
         alpha = alpha_along_gradient_line(xyz_coords, gradient_line[0], gradient_line[1]);
-        int num = 2;
-        float[3] gradient_scale = float[3](0, .3, 1);
-        vec4[3] gradient_color = vec4[3](vec4(1,0,0,1), vec4(0,1,0,1), vec4(0,0,1,1));
         vec2 gradient_interpolate = gradient_interpolate(gradient_scale, alpha);
         int index = int(gradient_interpolate[0]);
         float color_alpha = gradient_interpolate[1];

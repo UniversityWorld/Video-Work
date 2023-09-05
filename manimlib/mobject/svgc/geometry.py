@@ -9,7 +9,7 @@ from manimlib.constants import DL, DOWN, DR, LEFT, ORIGIN, OUT, RIGHT, UL, UP, U
 from manimlib.constants import GREY_A, RED, WHITE, BLACK
 from manimlib.constants import MED_SMALL_BUFF
 from manimlib.constants import DEGREES, PI, TAU
-from manimlib.mobject.svgc.mobject import Mobject
+from manimlib.mobject.mobject import Mobject
 from manimlib.mobject.svgc.vectorized_mobject import DashedVMobject
 from manimlib.mobject.svgc.vectorized_mobject import VGroup
 from manimlib.mobject.svgc.vectorized_mobject import VMobject
@@ -60,7 +60,6 @@ class TipableVMobject(VMobject):
             - Straightforward accessors, returning information pertaining
                 to the TipableVMobject instance's tip(s), its length etc
     """
-    fill_shader_folder: str = "quadratic_bezier_fill_g"
     tip_config: dict = dict(
         fill_opacity=1.0,
         stroke_width=0.0,

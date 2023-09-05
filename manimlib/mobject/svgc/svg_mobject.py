@@ -4,17 +4,17 @@ import os
 from xml.etree import ElementTree as ET
 
 import numpy as np
-import manimlib.mobject.svgc.svgelements_c as se
+import manimlib.mobject.svgc.svgelements as se
 import io
 
 from manimlib.constants import RIGHT
 from manimlib.logger import log
-from manimlib.mobject.svgc.geometry_c import Circle
-from manimlib.mobject.svgc.geometry_c import Line
-from manimlib.mobject.svgc.geometry_c import Polygon
-from manimlib.mobject.svgc.geometry_c import Polyline
-from manimlib.mobject.svgc.geometry_c import Rectangle
-from manimlib.mobject.svgc.geometry_c import RoundedRectangle
+from manimlib.mobject.svgc.geometry import Circle
+from manimlib.mobject.svgc.geometry import Line
+from manimlib.mobject.svgc.geometry import Polygon
+from manimlib.mobject.svgc.geometry import Polyline
+from manimlib.mobject.svgc.geometry import Rectangle
+from manimlib.mobject.svgc.geometry import RoundedRectangle
 from manimlib.mobject.svgc.vectorized_mobject import VMobject
 from manimlib.utils.directories import get_mobject_data_dir
 from manimlib.utils.images import get_full_vector_image_path
@@ -205,7 +205,8 @@ class SVGCMobject(VMobject):
             if not mob.has_points():
                 continue
             if isinstance(shape, se.GraphicObject):
-                self.apply_style_to_mobject(mob, shape)
+                if np.all(mob.gradient_line[0] == mob.gradient_line[1]):
+                    self.apply_style_to_mobject(mob, shape)
             if isinstance(shape, se.Transformable) and shape.apply:
                 self.handle_transform(mob, shape.transform)
             result.append(mob)
@@ -237,7 +238,11 @@ class SVGCMobject(VMobject):
         return mob
 
     def path_to_mobject(self, path: se.Path) -> VMobjectFromSVGPath:
-        return VMobjectFromSVGPath(path, **self.path_string_config)
+        path_mobject = VMobjectFromSVGPath(path, **self.path_string_config)
+        if path.gradient_data is not None:
+            path_mobject.set_gradient_color(path.gradient_data)
+            path_mobject.set_gradient_line(path.gradient_line)
+        return path_mobject
 
     def line_to_mobject(self, line: se.SimpleLine) -> Line:
         return Line(
@@ -262,6 +267,10 @@ class SVGCMobject(VMobject):
             rect.x + rect.width / 2,
             rect.y + rect.height / 2
         ))
+        if rect.gradient_data is not None:
+            mob.set_gradient_color(rect.gradient_data)
+            mob.set_gradient_line(rect.gradient_line)
+            mob.set_opacity(1)
         return mob
 
     def ellipse_to_mobject(self, ellipse: se.Circle | se.Ellipse) -> Circle:
