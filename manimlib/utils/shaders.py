@@ -85,8 +85,14 @@ def set_program_uniform(
 
     if type(value) is np.ndarray and value.ndim > 0:
         value = tuple(value)
-    if uniform_mirror.get(name, None) == value:
-        return False
+    try:
+        if uniform_mirror.get(name, None) == value:
+            return False
+    except:
+        mirror = np.array(uniform_mirror.get(name, None))
+        value = np.array(value)
+        if np.all(mirror == value):
+            return False
 
     try:
         program[name].value = value

@@ -205,7 +205,7 @@ class SVGCMobject(VMobject):
             if not mob.has_points():
                 continue
             if isinstance(shape, se.GraphicObject):
-                if np.all(mob.gradient_line[0] == mob.gradient_line[1]):
+                if np.all(np.array(mob.gradient_line) == np.array([np.array([0,0,0]), np.array([0,0,0])])):
                     self.apply_style_to_mobject(mob, shape)
             if isinstance(shape, se.Transformable) and shape.apply:
                 self.handle_transform(mob, shape.transform)
@@ -233,7 +233,7 @@ class SVGCMobject(VMobject):
             stroke_color=shape.stroke.hexrgb,
             stroke_opacity=shape.stroke.opacity,
             fill_color=shape.fill.hexrgb,
-            fill_opacity=shape.fill.opacity
+            fill_opacity=shape.fill.opacity,
         )
         return mob
 

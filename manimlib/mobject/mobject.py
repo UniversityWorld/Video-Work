@@ -252,6 +252,17 @@ class Mobject(object):
                     arr[:] = func(arr)
                 else:
                     arr[:] = func(arr - about_point) + about_point
+            try:
+                if not np.all(mob.gradient_line[0] == mob.gradient_line[1]):
+                    points = np.ndarray(shape=(2,3), dtype=float)
+                    points[:] = mob.gradient_line
+                    if about_point is None:
+                        mob.gradient_line = func(points)
+                    else:
+                        mob.gradient_line = func(points - about_point) + about_point
+                    mob.uniforms["gradient_line"] = [tuple(mob.gradient_line[i]) for i in range(2)]
+            except:
+                pass
 
         if not works_on_bounding_box:
             self.refresh_bounding_box(recurse_down=True)
