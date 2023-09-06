@@ -205,8 +205,12 @@ class SVGCMobject(VMobject):
             if not mob.has_points():
                 continue
             if isinstance(shape, se.GraphicObject):
-                if np.all(np.array(mob.gradient_line) == np.array([np.array([0,0,0]), np.array([0,0,0])])):
+                if shape.gradient_line is None:
                     self.apply_style_to_mobject(mob, shape)
+                else:
+                    mob.set_gradient_color(shape.gradient_data)
+                    mob.set_gradient_line(shape.gradient_line)
+                    mob.set_opacity(1)
             if isinstance(shape, se.Transformable) and shape.apply:
                 self.handle_transform(mob, shape.transform)
             result.append(mob)
@@ -267,10 +271,6 @@ class SVGCMobject(VMobject):
             rect.x + rect.width / 2,
             rect.y + rect.height / 2
         ))
-        if rect.gradient_data is not None:
-            mob.set_gradient_color(rect.gradient_data)
-            mob.set_gradient_line(rect.gradient_line)
-            mob.set_opacity(1)
         return mob
 
     def ellipse_to_mobject(self, ellipse: se.Circle | se.Ellipse) -> Circle:
