@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from xml.etree import ElementTree as ET
+from PIL import Image
 
 import numpy as np
 import manimlib.mobject.svgc.svgelements as se
@@ -205,11 +206,12 @@ class SVGCMobject(VMobject):
             if not mob.has_points():
                 continue
             if isinstance(shape, se.GraphicObject):
-                if shape.gradient_line is None:
+                if shape.gradient_mode == 0:
                     self.apply_style_to_mobject(mob, shape)
-                else:
+                elif shape.gradient_mode == 1:
                     mob.set_gradient_color(shape.gradient_data)
-                    mob.set_gradient_line(shape.gradient_line)
+                    mob.set_linear_gradient(shape.linear_gradient)
+                    # mob.set_stroke(opacity = 0)
                     mob.set_opacity(1)
             if isinstance(shape, se.Transformable) and shape.apply:
                 self.handle_transform(mob, shape.transform)
@@ -243,9 +245,6 @@ class SVGCMobject(VMobject):
 
     def path_to_mobject(self, path: se.Path) -> VMobjectFromSVGPath:
         path_mobject = VMobjectFromSVGPath(path, **self.path_string_config)
-        if path.gradient_data is not None:
-            path_mobject.set_gradient_color(path.gradient_data)
-            path_mobject.set_gradient_line(path.gradient_line)
         return path_mobject
 
     def line_to_mobject(self, line: se.SimpleLine) -> Line:

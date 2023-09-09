@@ -11,8 +11,8 @@ from manimlib.constants import DEFAULT_STROKE_WIDTH
 from manimlib.constants import DEGREES
 from manimlib.constants import JOINT_TYPE_MAP
 from manimlib.constants import ORIGIN, OUT
-from manimlib.mobject.svgc.mobject import Mobject
-from manimlib.mobject.svgc.mobject import Point
+from manimlib.mobject.mobject import Mobject
+from manimlib.mobject.mobject import Point
 from manimlib.utils.bezier import bezier
 from manimlib.utils.bezier import get_quadratic_approximation_of_cubic
 from manimlib.utils.bezier import approx_smooth_quadratic_bezier_handles

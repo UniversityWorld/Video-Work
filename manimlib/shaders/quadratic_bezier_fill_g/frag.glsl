@@ -1,7 +1,9 @@
 #version 330
 
 uniform bool winding;
-uniform vec3[2] gradient_line;
+uniform float gradient_mode;
+uniform vec3[2] linear_gradient;
+uniform vec3[2] radial_gradient;
 uniform float[37] gradient_scale;
 uniform vec4[37] gradient_color;
 
@@ -30,13 +32,21 @@ vec2 gradient_interpolate(float[37] gradient_scale, float alpha) {
 
 void main() {
     if (color.a == 0) discard;
-    float distance = distance(gradient_line[0], gradient_line[1]);
-    if (distance == 0.0){
+    if (gradient_mode == 0){
         frag_color = color;
     }
-    else{
+    else if (gradient_mode == 1){
         float alpha = 0.0; 
-        alpha = alpha_along_gradient_line(xyz_coords, gradient_line[0], gradient_line[1]);
+        alpha = alpha_along_gradient_line(xyz_coords, linear_gradient[0], linear_gradient[1]);
+        vec2 gradient_interpolate = gradient_interpolate(gradient_scale, alpha);
+        int index = int(gradient_interpolate[0]);
+        float color_alpha = gradient_interpolate[1];
+        frag_color = mix(gradient_color[index],gradient_color[index+1], color_alpha);
+    }
+    else if (gradient_mode == 2){
+        float alpha = 0.0;
+        float dist = distance(radial_gradient[0].xy, radial_gradient[1].xy);
+        alpha = distance(radial_gradient[0].xy, xyz_coords.xy)/dist;
         vec2 gradient_interpolate = gradient_interpolate(gradient_scale, alpha);
         int index = int(gradient_interpolate[0]);
         float color_alpha = gradient_interpolate[1];

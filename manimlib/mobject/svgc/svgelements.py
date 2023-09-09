@@ -9024,9 +9024,9 @@ class SVG(Group):
         root = context
         styles = {}
         linearGradient = {}
-        radiaGradient = {}
+        radialGradient = {}
         stack = []
-        gradient_data = None
+        gradient_mode = 0
 
         values = {
             SVG_ATTR_COLOR: color,
@@ -9070,17 +9070,70 @@ class SVG(Group):
 
                 # gradient style
                 if SVG_TAG_LINEARGRADIENT == tag:
+                    gradient_mode = 1
                     if attributes[SVG_ATTR_ID] not in linearGradient:
                         gradient_id = attributes[SVG_ATTR_ID]
                         linearGradient[gradient_id] = {}
                         for key in attributes:
-                            if key in ['gradientUnits', 'x1', 'y1', 'x2', 'y2']:
+                            if key in ['gradientUnits', 'x1', 'y1', 'x2', 'y2', "gradientTransform"]:
                                 linearGradient[gradient_id][key] = attributes[key]
                         gradient_data = []
-                        gradient_line = [(float(attributes['x1']), float(attributes['y1']), 0), (float(attributes['x2']), float(attributes['y2']), 0)]
-                                        
+                        def apply_gradient_transform(v, transform_matrix):
+                            a, b, c, d, e, f = transform_matrix
+                            new_x = a * v[0] + c * v[1] + e
+                            new_y = b * v[0] + d * v[1] + f
+                            return (new_x, new_y, 0)
+                        
+                        vec1 = (float(attributes['x1']), float(attributes['y1']), 0)
+                        vec2 = (float(attributes['x2']), float(attributes['y2']), 0)                        
+                        if "gradientTransform" in attributes:
+                            transform_matrix = attributes["gradientTransform"]
+                            transform_matrix = re.findall(r'matrix\((.*)\)', transform_matrix)[0]
+                            if "," in transform_matrix:
+                                transform_matrix = transform_matrix.split(",")
+                            else:
+                                transform_matrix = transform_matrix.split(" ")
+                            transform_matrix = [float(m) for m in transform_matrix]
+                            vec1 = apply_gradient_transform(vec1, transform_matrix)
+                            vec2 = apply_gradient_transform(vec2, transform_matrix)
+                        linear_gradient = [vec1, vec2]
+                elif SVG_TAG_RADIALGRADIENT == tag:
+                    gradient_mode = 2
+                    if attributes[SVG_ATTR_ID] not in radialGradient:
+                        gradient_id = attributes[SVG_ATTR_ID]
+                        radialGradient[gradient_id] = {}  
+                        for key in attributes:
+                            if key in ['gradientUnits', 'cx', 'cy', 'r', 'gradientTransform']:
+                                radialGradient[gradient_id][key] = attributes[key]  
+                        gradient_data = []
+                        def apply_gradient_transform(v, transform_matrix):
+                            a, b, c, d, e, f = transform_matrix
+                            new_x = a * v[0] + c * v[1] + e
+                            new_y = b * v[0] + d * v[1] + f
+                            return (new_x, new_y, 0)
+                        
+                        vec1 = (float(attributes['cx']), float(attributes['cy']), 0)
+                        vec2 = (float(attributes['cx']) + float(attributes['r']), float(attributes['cy']), 0)                       
+                        if "gradientTransform" in attributes:
+                            transform_matrix = attributes["gradientTransform"]
+                            transform_matrix = re.findall(r'matrix\((.*)\)', transform_matrix)[0]
+                            if "," in transform_matrix:
+                                transform_matrix = transform_matrix.split(",")
+                            else:
+                                transform_matrix = transform_matrix.split(" ")
+                            transform_matrix = [float(m) for m in transform_matrix]
+                            vec1 = apply_gradient_transform(vec1, transform_matrix)
+                            vec2 = apply_gradient_transform(vec2, transform_matrix)
+                        radial_gradient = [vec1, vec2] 
                 if SVG_TAG_STOP == tag:
-                    gradient_data.append([float(attributes['offset']), attributes["style"][11:]])
+                    stop_style = attributes["style"]
+                    stop_color = re.findall(r'stop-color:\s*(#[\w\d]{6})', stop_style)[0]
+                    if "opacity" in stop_style:
+                        opacity = float(re.findall(r'opacity:([\d\.]+)', stop_style)[0])
+                        stop_style = stop_style.split(";")[0]
+                    else:
+                        opacity = 1
+                    gradient_data.append([float(attributes['offset']), stop_color, opacity])
                 # Split any Style block elements into parts; priority medium
                 style = ""
                 if "*" in styles:  # Select all.
@@ -9273,12 +9326,16 @@ class SVG(Group):
                             # s was not established we continue without it.
                             continue
                     try:
-                        if gradient_data is not None:
-                            setattr(s, "gradient_line", gradient_line)
+                        if gradient_mode == 0:
+                            setattr(s, "gradient_mode", 0)
+                        elif gradient_mode == 1:
+                            setattr(s, "gradient_mode", 1)
+                            setattr(s, "linear_gradient", linear_gradient)
                             setattr(s, "gradient_data", gradient_data)
-                        else:
-                            setattr(s, "gradient_line", None)
-                            setattr(s, "gradient_data", None)
+                        elif gradient_mode == 2:
+                            setattr(s, "gradient_mode", 2)
+                            setattr(s, "radial_gradient", radial_gradient)
+                            setattr(s, "gradient_data", gradient_data)
                     except:
                         pass
                     s.render(ppi=ppi, width=width, height=height)
@@ -9334,7 +9391,7 @@ class SVG(Group):
                         root.objects[attributes[SVG_ATTR_ID]] = s
             elif event == "end":  # End event.
                 if SVG_TAG_GROUP == tag:
-                    gradient_data = None
+                    gradient_mode = 0
                 # The iterparse spec makes it clear that internal text data is undefined except at the end.
                 if (
                     SVG_ATTR_DISPLAY in values
@@ -9346,6 +9403,8 @@ class SVG(Group):
 
                 if SVG_TAG_LINEARGRADIENT == tag:
                     linearGradient[gradient_id]["gradient_colors"] = gradient_data
+                elif SVG_TAG_RADIALGRADIENT == tag:
+                    radialGradient[gradient_id]["gradient_colors"] = gradient_data
 
                 s = None
                 if tag in (

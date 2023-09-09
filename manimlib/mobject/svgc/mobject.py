@@ -91,8 +91,9 @@ class Mobject(object):
         self.texture_paths = texture_paths
         self._is_fixed_in_frame = is_fixed_in_frame
         self.depth_test = depth_test
-        self.gradient_line = [np.array([0,0,0]), np.array([0,0,0])]
-
+        self.gradient_mode = 0    # 0: no gradient; 1: linearGradient; 2: radialGradient
+        self.linear_gradient = [np.array([0,0,0]), np.array([0,0,0])]
+        self.radial_gradient = [np.array([0,0,0]), np.array([0,0,0])]
         # Internal state
         self.submobjects: list[Mobject] = []
         self.parents: list[Mobject] = []
@@ -138,7 +139,9 @@ class Mobject(object):
         self.uniforms: UniformDict = {
             "is_fixed_in_frame": float(self._is_fixed_in_frame),
             "shading": np.array(self.shading, dtype=float),
-            "gradient_line": self.gradient_line,
+            "gradient_mode": self.gradient_mode,
+            "linear_gradient": self.linear_gradient,
+            "radial_gradient": self.radial_gradient,
             "gradient_scale": [0]*37,
             "gradient_color": [np.array([0,0,0,0])]*37,
         }
@@ -258,14 +261,22 @@ class Mobject(object):
                     arr[:] = func(arr - about_point) + about_point
 
             try:
-                if not np.all(mob.gradient_line[0] == mob.gradient_line[1]):
+                if mob.gradient_mode == 1:
                     points = np.ndarray(shape=(2,3), dtype=float)
-                    points[:] = mob.gradient_line
+                    points[:] = mob.linear_gradient
                     if about_point is None:
-                        mob.gradient_line = func(points)
+                        mob.linear_gradient = func(points)
                     else:
-                        mob.gradient_line = func(points - about_point) + about_point
-                    mob.uniforms["gradient_line"] = [tuple(mob.gradient_line[i]) for i in range(2)]
+                        mob.linear_gradient = func(points - about_point) + about_point
+                    mob.uniforms["linear_gradient"] = [tuple(mob.linear_gradient[i]) for i in range(2)]
+                elif mob.gradient_mode == 2:
+                    points = np.ndarray(shape=(2,3), dtype=float)
+                    points[:] = mob.radial_gradient
+                    if about_point is None:
+                        mob.radial_gradient = func(points)
+                    else:
+                        mob.radial_gradient = func(points - about_point) + about_point
+                    mob.uniforms["radial_gradient"] = [tuple(mob.radial_gradient[i]) for i in range(2)]
             except:
                 pass
 
@@ -1933,15 +1944,24 @@ class Mobject(object):
         num = len(gradient_data)
         for g in gradient_data:
             gradient_scale.append(g[0])
-            gradient_color.append(color_to_rgba(g[1]))
+            gradient_color.append(color_to_rgba(g[1], g[2]))
         self.uniforms["gradient_scale"] = gradient_scale + [1]*(37 - num)
         self.uniforms["gradient_color"] = gradient_color + [np.array([0,0,0,0])]*(37 - num)
         # gradient_color_vec4 = [f'vec4({", ".join(map(str, gc))})' for gc in gradient_color]
         return self
     
-    def set_gradient_line(self, gradient_line):
-        self.gradient_line = gradient_line
-        self.uniforms["gradient_line"] = [tuple(self.gradient_line[i]) for i in range(2)]
+    def set_linear_gradient(self, linear_gradient):
+        self.linear_gradient = linear_gradient
+        self.gradient_mode = 1
+        self.uniforms["linear_gradient"] = [tuple(self.linear_gradient[i]) for i in range(2)]
+        self.uniforms["gradient_mode"] = 1
+        return self
+    
+    def set_radial_gradient(self, radial_gradient):
+        self.radial_gradient = radial_gradient
+        self.gradient_mode = 2
+        self.uniforms["radial_gradient"] = [tuple(self.radial_gradient[i]) for i in range(2)]
+        self.uniforms["gradient_mode"] = 2
         return self
         
     def set_color_by_code(self, glsl_code: str) -> Self:
