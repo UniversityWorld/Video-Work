@@ -893,6 +893,7 @@ class Vector(Arrow):
         buff: float = 0.0,
         **kwargs
     ):
+        self.direction = direction
         if len(direction) == 2:
             direction = np.hstack([direction, 0])
         super().__init__(ORIGIN, direction, buff=buff, **kwargs)
