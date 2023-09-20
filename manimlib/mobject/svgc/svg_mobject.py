@@ -36,7 +36,6 @@ PATH_TO_POINTS: dict[str, Vect3Array] = {}
 def _convert_point_to_3d(x: float, y: float) -> np.ndarray:
     return np.array([x, y, 0.0])
 
-
 class SVGCMobject(VMobject):
     file_name: str = ""
     height: float | None = 2.0
@@ -107,11 +106,11 @@ class SVGCMobject(VMobject):
             SVG_HASH_TO_MOB_MAP[hash_val] = [sm.copy() for sm in submobs]
 
         self.add(*submobs)
-        # for sm in submobs:
-        #     try:
-        #         setattr(self, sm.name, sm)
-        #     except:
-        #         pass
+        for sm in submobs:
+            try:
+                setattr(self, sm.name, sm)
+            except:
+                pass
         self.flip(RIGHT)  # Flip y
 
     @property
@@ -220,8 +219,8 @@ class SVGCMobject(VMobject):
                     mob.set_opacity(1)
             if isinstance(shape, se.Transformable) and shape.apply:
                 self.handle_transform(mob, shape.transform)            
-            # if shape.id and "#" not in shape.id:
-            #     setattr(mob, "name", shape.id)
+            if shape.id and "#" not in shape.id:
+                setattr(mob, "name", shape.id)
             result.append(mob)
         return result
 
