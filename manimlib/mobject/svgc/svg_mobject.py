@@ -104,11 +104,12 @@ class SVGCMobject(VMobject):
         else:
             submobs = self.mobjects_from_file(self.get_file_path())
             SVG_HASH_TO_MOB_MAP[hash_val] = [sm.copy() for sm in submobs]
-
         self.add(*submobs)
+        self.names = []
         for sm in submobs:
             try:
                 setattr(self, sm.name, sm)
+                self.names.append(sm.name)
             except:
                 pass
         self.flip(RIGHT)  # Flip y
