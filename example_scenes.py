@@ -729,7 +729,7 @@ class ControlsExample(Scene):
 
         self.textbox.set_value("Manim")
         # self.wait(60)
-        # self.embed()
+        self.embed()
 
 
 # See https://github.com/3b1b/videos for many, many more
