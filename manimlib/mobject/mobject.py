@@ -1867,7 +1867,8 @@ class Mobject(object):
             )
             sm.lock_uniforms(
                 key for key in self.uniforms
-                if all(listify(mobject1.uniforms.get(key, 0) == mobject2.uniforms.get(key, 0)))
+                # if all(listify(mobject1.uniforms.get(key, 0) == mobject2.uniforms.get(key, 0)))
+                if np.array_equal(mobject1.uniforms.get(key, 0), mobject2.uniforms.get(key, 0))
             )
             sm.const_data_keys = set(
                 key for key in sm.data.dtype.names
