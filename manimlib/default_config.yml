@@ -6,8 +6,7 @@ directories:
   # Where should manim output video and image files?
   output: "/Users/bowen/Documents/Python/Manim/Videos"
   # If you want to use images, manim will look to these folders to find them
-  # raster_images: "/Users/bowen/Documents/Python/Manim/Files/images/raster"
-  raster_images: "/Users/bowen/Documents/Python/Manim/Files/images"
+  raster_images: "/Users/bowen/Documents/Python/Manim/Files/images/raster"
   vector_images: "/Users/bowen/Documents/Python/Manim/Files/images/vector"
   pi_creature_images: "/Users/bowen/Documents/Python/Manim/Files/svg_images/pi_creature"
   data: "/Users/bowen/Documents/Python/Manim/Files/data"

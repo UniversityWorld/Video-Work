@@ -159,7 +159,6 @@ class VectorField(VGroup):
             self.vector_config,
             kwargs
         )
-
         output = np.array(self.func(*coords))
         norm = get_norm(output)
         if norm > 0:
@@ -304,6 +303,7 @@ class AnimatedStreamLines(VGroup):
         self,
         stream_lines: StreamLines,
         lag_range: float = 4,
+        speed: float = 1,
         line_anim_config: dict = dict(
             rate_func=linear,
             time_width=1.0,
@@ -312,6 +312,7 @@ class AnimatedStreamLines(VGroup):
     ):
         super().__init__(**kwargs)
         self.stream_lines = stream_lines
+        self.speed= speed
 
         for line in stream_lines:
             line.anim = VShowPassingFlash(
@@ -328,6 +329,6 @@ class AnimatedStreamLines(VGroup):
     def update(self, dt: float) -> None:
         stream_lines = self.stream_lines
         for line in stream_lines:
-            line.time += dt
+            line.time += self.speed*dt
             adjusted_time = max(line.time, 0) % line.anim.run_time
             line.anim.update(adjusted_time / line.anim.run_time)
