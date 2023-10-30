@@ -194,6 +194,7 @@ class StreamLines(VGroup):
         max_time_steps: int = 200,
         n_samples_per_line: int = 10,
         cutoff_norm: float = 15,
+        restricted_lines: float | None = None,
         # Style info
         stroke_width: float = 1.0,
         stroke_color: ManimColor = WHITE,
@@ -222,6 +223,7 @@ class StreamLines(VGroup):
         self.magnitude_range = magnitude_range
         self.taper_stroke_width = taper_stroke_width
         self.color_map = color_map
+        self.restricted_lines = restricted_lines
 
         self.draw_lines()
         self.init_style()
@@ -238,7 +240,14 @@ class StreamLines(VGroup):
             points = [point]
             total_arc_len = 0
             time = 0
+            added = True
             for x in range(self.max_time_steps):
+                if type(self.restricted_lines) == list:
+                    point_t = self.restricted_lines[0]
+                    threshold = self.restricted_lines[1]
+                    if get_norm(points[-1] - point_t) <= threshold:
+                        added = False
+                        break
                 time += self.dt
                 last_point = points[-1]
                 new_point = last_point + self.dt * (self.point_func(last_point) - origin)
@@ -248,12 +257,13 @@ class StreamLines(VGroup):
                     break
                 if total_arc_len > self.arc_len:
                     break
-            line = VMobject()
-            line.virtual_time = time
-            step = max(1, int(len(points) / self.n_samples_per_line))
-            line.set_points_as_corners(points[::step])
-            line.make_smooth(approx=True)
-            lines.append(line)
+            if added:
+                line = VMobject()
+                line.virtual_time = time
+                step = max(1, int(len(points) / self.n_samples_per_line))
+                line.set_points_as_corners(points[::step])
+                line.make_smooth(approx=True)
+                lines.append(line)
         self.set_submobjects(lines)
 
     def get_start_points(self) -> Vect3Array:
