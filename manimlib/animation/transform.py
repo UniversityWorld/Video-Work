@@ -168,6 +168,7 @@ class ApplyMethod(Transform):
 
         Relies on the fact that mobject methods return the mobject
         """
+        print(method)
         self.check_validity_of_input(method)
         self.method = method
         self.method_args = args
