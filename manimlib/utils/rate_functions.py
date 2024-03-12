@@ -107,3 +107,16 @@ def exponential_decay(t: float, half_life: float = 0.1) -> float:
     # The half-life should be rather small to minimize
     # the cut-off error at the end
     return 1 - np.exp(-t / half_life)
+
+def ease_out_bounce(t: float) -> float:
+    n1 = 7.5625
+    d1 = 2.75
+
+    if t < 1 / d1:
+        return n1 * t * t
+    elif t < 2 / d1:
+        return n1 * (t - 1.5 / d1) * (t - 1.5 / d1) + 0.75
+    elif t < 2.5 / d1:
+        return n1 * (t - 2.25 / d1) * (t - 2.25 / d1) + 0.9375
+    else:
+        return n1 * (t - 2.625 / d1) * (t - 2.625 / d1) + 0.984375
