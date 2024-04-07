@@ -98,6 +98,8 @@ def interpolate(start: Scalable, end: Scalable, alpha: float | VectN) -> Scalabl
     try:
         return (1 - alpha) * start + alpha * end
     except TypeError:
+        if type(start) == list and type(end) == list:
+            return [interpolate(x, y, alpha) for x, y in zip(start, end)]
         log.debug(f"`start` parameter with type `{type(start)}` and dtype `{start.dtype}`")
         log.debug(f"`end` parameter with type `{type(end)}` and dtype `{end.dtype}`")
         log.debug(f"`alpha` parameter with value `{alpha}`")
