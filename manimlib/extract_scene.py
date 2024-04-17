@@ -26,7 +26,6 @@ def is_child_scene(obj, module):
         return False
     return True
 
-
 def prompt_user_for_choice(scene_classes):
     name_to_class = {}
     max_digits = len(str(len(scene_classes)))
