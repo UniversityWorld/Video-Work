@@ -1,6 +1,6 @@
 import pkg_resources
 
-__version__ = pkg_resources.get_distribution("manimgl").version
+__version__ = "econ_scenario_2024_04_18"
 
 from typing import TYPE_CHECKING
 
