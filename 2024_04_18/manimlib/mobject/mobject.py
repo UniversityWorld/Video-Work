@@ -363,7 +363,16 @@ class Mobject(object):
         point: Vect3,
         buff: float = 0
     ) -> bool:
-        return self.are_points_touching(np.array(point, ndmin=2), buff)[0]
+        if hasattr(self, "frame") and self.is_fixed_in_frame():
+            point = self.frame.to_fixed_frame_point(point)
+            point[2] = 0
+            point = np.array(point, ndmin=2)
+            bb = self.get_bounding_box()
+            mins = (bb[0] - buff)
+            maxs = (bb[2] + buff)
+            return ((point >= mins) * (point <= maxs)).all(1)[0]
+        else:
+            return self.are_points_touching(np.array(point, ndmin=2), buff)[0]
 
     def is_touching(self, mobject: Mobject, buff: float = 1e-2) -> bool:
         bb1 = self.get_bounding_box()
