@@ -370,6 +370,8 @@ class Mobject(object):
             bb = self.get_bounding_box()
             mins = (bb[0] - buff)
             maxs = (bb[2] + buff)
+            mins[-1] = 0
+            maxs[-1] = 0
             return ((point >= mins) * (point <= maxs)).all(1)[0]
         else:
             return self.are_points_touching(np.array(point, ndmin=2), buff)[0]
