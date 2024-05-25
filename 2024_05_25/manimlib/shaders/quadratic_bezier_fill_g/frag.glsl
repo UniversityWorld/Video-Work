@@ -5,7 +5,7 @@ uniform float gradient_mode;
 uniform int gradient_size;
 uniform vec3[2] linear_gradient;
 uniform vec3[2] radial_gradient;
-uniform float gradient_scale[];
+uniform float[37] gradient_scale;
 uniform vec4[37] gradient_color;
 
 in vec4 color;
@@ -18,7 +18,18 @@ out vec4 frag_color;
 
 #INSERT add_gradient.glsl
 
-
+vec2 gradient_interpolate(float[37] gradient_scale, float alpha) {
+    int index = 0;
+    for (int i = 0; i < 37; i++) {
+        if (alpha <= gradient_scale[i]) {
+            index = max(i-1, 0);
+            break;
+        }
+    }
+    float color_alpha = 0.0;
+    color_alpha = clamp((alpha - gradient_scale[index]) / (gradient_scale[index + 1] - gradient_scale[index]), 0.0, 1.0);
+    return vec2(index, color_alpha);
+}
 
 void main() {
     if (color.a == 0) discard;
@@ -32,16 +43,23 @@ void main() {
             frag_color = gradient_color[gradient_size - 1];
         }
         else if (alpha < 1){
-            int index = 0;
-            for (int i = 0; i < gradient_size; i++) {
-                if (alpha <= gradient_scale[i]) {
-                    index = max(i-1, 0);
-                    break;
-                }
-            }
-            float color_alpha = 0.0;
-            color_alpha = clamp((alpha - gradient_scale[index]) / (gradient_scale[index + 1] - gradient_scale[index]), 0.0, 1.0);
-
+            vec2 gradient_interpolate = gradient_interpolate(gradient_scale, alpha);
+            int index = int(gradient_interpolate[0]);
+            float color_alpha = gradient_interpolate[1];
+            frag_color = mix(gradient_color[index],gradient_color[index+1], color_alpha);
+        }
+    }
+    else if (gradient_mode == 2){
+        float alpha = 0.0;
+        float dist = distance(radial_gradient[0].xy, radial_gradient[1].xy);
+        alpha = distance(radial_gradient[0].xy, xyz_coords.xy)/dist;
+        if (alpha >= 1){
+            frag_color = gradient_color[gradient_size - 1];
+        }
+        else if (alpha < 1){
+            vec2 gradient_interpolate = gradient_interpolate(gradient_scale, alpha);
+            int index = int(gradient_interpolate[0]);
+            float color_alpha = gradient_interpolate[1];
             frag_color = mix(gradient_color[index],gradient_color[index+1], color_alpha);
         }
     }
