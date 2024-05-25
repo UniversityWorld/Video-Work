@@ -92,6 +92,7 @@ class Mobject(object):
         self._is_fixed_in_frame = is_fixed_in_frame
         self.depth_test = depth_test
         self.gradient_mode = 0    # 0: no gradient; 1: linearGradient; 2: radialGradient
+        self.gradient_size = 2
         self.linear_gradient = [np.array([0,0,0]), np.array([0,0,0])]
         self.radial_gradient = [np.array([0,0,0]), np.array([0,0,0])]
         # Internal state
@@ -140,6 +141,7 @@ class Mobject(object):
             "is_fixed_in_frame": float(self._is_fixed_in_frame),
             "shading": np.array(self.shading, dtype=float),
             "gradient_mode": self.gradient_mode,
+            "gradient_size": self.gradient_size,
             "linear_gradient": self.linear_gradient,
             "radial_gradient": self.radial_gradient,
             "gradient_scale": [0]*37,
@@ -1960,9 +1962,13 @@ class Mobject(object):
         if float(gradient_scale[-1]) < 1:
             self.uniforms["gradient_scale"] = gradient_scale + [1]*(37 - num)
             self.uniforms["gradient_color"] = gradient_color + [gradient_color[-1]]+ [np.array([0,0,0,0])]*(37 - num)
+            self.gradient_size = num + 1
+            self.uniforms["gradient_size"] = num + 1
         else:
             self.uniforms["gradient_scale"] = gradient_scale + [1]*(37 - num)
             self.uniforms["gradient_color"] = gradient_color + [np.array([0,0,0,0])]*(37 - num)
+            self.gradient_size = num
+            self.uniforms["gradient_size"] = num
         if not isinstance(linear_gradient, type(None)):
             self.set_linear_gradient(linear_gradient)
             self.fill_shader_folder = "quadratic_bezier_fill_g"
