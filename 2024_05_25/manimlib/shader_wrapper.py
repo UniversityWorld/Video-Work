@@ -42,6 +42,7 @@ class ShaderWrapper(object):
         texture_paths: Optional[dict[str, str]] = None,  # A dictionary mapping names to filepaths for textures.
         depth_test: bool = False,
         render_primitive: int = moderngl.TRIANGLE_STRIP,
+        gradient_size = False,
     ):
         self.ctx = ctx
         self.vert_data = vert_data
@@ -50,6 +51,7 @@ class ShaderWrapper(object):
         self.shader_folder = shader_folder
         self.depth_test = depth_test
         self.render_primitive = render_primitive
+        self.gradient_size = gradient_size
 
         self.program_uniform_mirror: UniformDict = dict()
         self.bind_to_mobject_uniforms(mobject_uniforms or dict())
@@ -64,9 +66,12 @@ class ShaderWrapper(object):
 
     def init_program_code(self) -> None:
         def get_code(name: str) -> str | None:
-            return get_shader_code_from_file(
+            shader_code = get_shader_code_from_file(
                 os.path.join(self.shader_folder, f"{name}.glsl")
             )
+            if self.gradient_size:
+                shader_code = shader_code.replace("gradientsize", str(self.gradient_size))
+            return shader_code
 
         self.program_code: dict[str, str | None] = {
             "vertex_shader": get_code("vert"),

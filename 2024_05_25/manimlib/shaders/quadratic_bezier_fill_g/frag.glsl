@@ -5,8 +5,8 @@ uniform float gradient_mode;
 uniform int gradient_size;
 uniform vec3[2] linear_gradient;
 uniform vec3[2] radial_gradient;
-uniform float[37] gradient_scale;
-uniform vec4[37] gradient_color;
+uniform float[gradientsize] gradient_scale;
+uniform vec4[gradientsize] gradient_color;
 
 in vec4 color;
 in float fill_all;
@@ -18,9 +18,9 @@ out vec4 frag_color;
 
 #INSERT add_gradient.glsl
 
-vec2 gradient_interpolate(float[37] gradient_scale, float alpha) {
+vec2 gradient_interpolate(float[gradientsize] gradient_scale, float alpha) {
     int index = 0;
-    for (int i = 0; i < 37; i++) {
+    for (int i = 0; i < gradientsize; i++) {
         if (alpha <= gradient_scale[i]) {
             index = max(i-1, 0);
             break;

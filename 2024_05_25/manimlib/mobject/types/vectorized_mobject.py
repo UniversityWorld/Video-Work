@@ -1292,6 +1292,7 @@ class VMobject(Mobject):
             mobject_uniforms=self.uniforms,
             shader_folder=self.fill_shader_folder,
             render_primitive=self.fill_render_primitive,
+            gradient_size = self.gradient_size     # changed
         )
         self.stroke_shader_wrapper = ShaderWrapper(
             ctx=ctx,

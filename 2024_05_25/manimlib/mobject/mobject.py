@@ -144,8 +144,8 @@ class Mobject(object):
             "gradient_size": self.gradient_size,
             "linear_gradient": self.linear_gradient,
             "radial_gradient": self.radial_gradient,
-            "gradient_scale": [0]*37,
-            "gradient_color": [np.array([0,0,0,0])]*37,
+            "gradient_scale": [],
+            "gradient_color": [],
         }
 
     def init_colors(self):
@@ -1960,21 +1960,23 @@ class Mobject(object):
             gradient_scale.append(g[0])
             gradient_color.append(color_to_rgba(g[1], g[2]))
         if float(gradient_scale[-1]) < 1:
-            self.uniforms["gradient_scale"] = gradient_scale + [1]*(37 - num)
-            self.uniforms["gradient_color"] = gradient_color + [gradient_color[-1]]+ [np.array([0,0,0,0])]*(37 - num)
+            self.uniforms["gradient_scale"] = gradient_scale + [1]
+            self.uniforms["gradient_color"] = gradient_color + [gradient_color[-1]]
             self.gradient_size = num + 1
             self.uniforms["gradient_size"] = num + 1
         else:
-            self.uniforms["gradient_scale"] = gradient_scale + [1]*(37 - num)
-            self.uniforms["gradient_color"] = gradient_color + [np.array([0,0,0,0])]*(37 - num)
+            self.uniforms["gradient_scale"] = gradient_scale
+            self.uniforms["gradient_color"] = gradient_color
             self.gradient_size = num
             self.uniforms["gradient_size"] = num
-        if not isinstance(linear_gradient, type(None)):
-            self.set_linear_gradient(linear_gradient)
-            self.fill_shader_folder = "quadratic_bezier_fill_g"
-            self.set_opacity(1)
-        elif not isinstance(radial_gradient, type(None)):
+        if not isinstance(radial_gradient, type(None)):
             self.set_radial_gradient(radial_gradient)
+            self.fill_shader_folder = "quadratic_bezier_fill_g"
+            self.set_opacity(1)        
+        else:  
+            if isinstance(linear_gradient, type(None)):
+                linear_gradient = [ORIGIN, RIGHT]
+            self.set_linear_gradient(linear_gradient)
             self.fill_shader_folder = "quadratic_bezier_fill_g"
             self.set_opacity(1)
         # gradient_color_vec4 = [f'vec4({", ".join(map(str, gc))})' for gc in gradient_color]
