@@ -93,8 +93,6 @@ class Mobject(object):
         self.depth_test = depth_test
         self.gradient_mode = 0    # 0: no gradient; 1: linearGradient; 2: radialGradient
         self.gradient_size = 2
-        self.linear_gradient = [np.array([0,0,0]), np.array([0,0,0])]
-        self.radial_gradient = [np.array([0,0,0]), np.array([0,0,0])]
         # Internal state
         self.submobjects: list[Mobject] = []
         self.parents: list[Mobject] = []
@@ -142,8 +140,8 @@ class Mobject(object):
             "shading": np.array(self.shading, dtype=float),
             "gradient_mode": self.gradient_mode,
             "gradient_size": self.gradient_size,
-            "linear_gradient": self.linear_gradient,
-            "radial_gradient": self.radial_gradient,
+            "linear_gradient": [],
+            "radial_gradient": [],
             "gradient_scale": [],
             "gradient_color": [],
         }
@@ -1983,16 +1981,14 @@ class Mobject(object):
         return self
     
     def set_linear_gradient(self, linear_gradient):
-        self.linear_gradient = linear_gradient
         self.gradient_mode = 1
-        self.uniforms["linear_gradient"] = [tuple(self.linear_gradient[i]) for i in range(2)]
+        self.uniforms["linear_gradient"] = [tuple(linear_gradient[i]) for i in range(2)]
         self.uniforms["gradient_mode"] = 1
         return self
     
     def set_radial_gradient(self, radial_gradient):
-        self.radial_gradient = radial_gradient
         self.gradient_mode = 2
-        self.uniforms["radial_gradient"] = [tuple(self.radial_gradient[i]) for i in range(2)]
+        self.uniforms["radial_gradient"] = [tuple(radial_gradient[i]) for i in range(2)]
         self.uniforms["gradient_mode"] = 2
         return self
         
