@@ -30,6 +30,46 @@ vec2 gradient_interpolate(float[~gradient_size] gradient_scale, float alpha) {
     return vec2(index, color_alpha);
 }
 
+vec4 mixed_gradient_color(vec3 coord) {
+    vec4 resultColor = vec4(0.0);
+    float totalWeight = 0.0;
+    float distance_01 = length(gradient_points[1] - gradient_points[0]);
+    float scale_factor = distance_01/gradient_points[~gradient_points - 1].x;
+    for (int i = 0; i < ~gradient_size; i++) {
+        float offset = scale_factor*gradient_scale[i];
+        float distance = length(coord - gradient_points[i]);
+        if (distance < 0.001 + offset) {
+            return gradient_color[i];
+        }
+        distance -= offset;
+        float weight = 1.0 / (distance * distance);
+        resultColor += gradient_color[i] * weight;
+        totalWeight += weight;
+    }
+    if (totalWeight > 0.0) {
+        resultColor /= totalWeight;
+    }
+    return resultColor;
+}
+
+vec4 mixed_diamond_gradient(vec3 coord) {
+    vec4 resultColor = vec4(0.0);
+    float totalWeight = 0.0;
+    for (int i = 0; i < ~gradient_points; i++) {
+        float distance = abs(coord.x - gradient_points[i].x) + abs(coord.y - gradient_points[i].y);
+        if (distance < 0.001) {
+            return gradient_color[i];
+        }
+        float weight = 1.0 / (distance * distance);
+        resultColor += gradient_color[i] * weight;
+        totalWeight += weight;
+    }
+    if (totalWeight > 0.0) {
+        resultColor /= totalWeight;
+    }
+    return resultColor;
+}
+
 void main() {
     if (color.a == 0) discard;
     if (gradient_mode == 0){
@@ -61,6 +101,9 @@ void main() {
             float color_alpha = gradient_interpolate[1];
             frag_color = mix(gradient_color[index],gradient_color[index+1], color_alpha);
         }
+    }
+    else if (gradient_mode == 3){
+        frag_color = mixed_gradient_color(xyz_coords);
     }
     /*
     We want negatively oriented triangles to be canceled with positively

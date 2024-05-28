@@ -261,14 +261,19 @@ class Mobject(object):
                     arr[:] = func(arr - about_point) + about_point
 
             try:
+                if mob.gradient_mode == 3:
+                    modified_point = mob.gradient_points[-1]
                 if mob.gradient_mode != 0:
-                    points = np.ndarray(shape=(2,3), dtype=float)
+                    points_num = len(mob.gradient_points)
+                    points = np.ndarray(shape=(points_num,3), dtype=float)
                     points[:] = mob.gradient_points
                     if about_point is None:
                         mob.gradient_points = func(points)
                     else:
                         mob.gradient_points = func(points - about_point) + about_point
-                    mob.uniforms["gradient_points"] = [tuple(mob.gradient_points[i]) for i in range(2)]
+                    if mob.gradient_mode == 3:
+                        mob.gradient_points[-1] = modified_point
+                    mob.uniforms["gradient_points"] = [tuple(mob.gradient_points[i]) for i in range(points_num)]
             except:
                 pass
 
@@ -1942,14 +1947,14 @@ class Mobject(object):
             mob._shaders_initialized = False
         return self
 
-    def set_gradient_color(self, gradient_data, linear_gradient = None, radial_gradient = None):
+    def set_gradient_color(self, gradient_data, linear_gradient = None, radial_gradient = None, gradient_points = None, mode = None, recursive = False):
         gradient_scale = []
         gradient_color = []
         num = len(gradient_data)
         for g in gradient_data:
             gradient_scale.append(g[0])
             gradient_color.append(color_to_rgba(g[1], g[2]))
-        if float(gradient_scale[-1]) < 1:
+        if float(gradient_scale[-1]) < 1 and isinstance(gradient_points, type(None)):
             self.uniforms["gradient_scale"] = gradient_scale + [1]
             self.uniforms["gradient_color"] = gradient_color + [gradient_color[-1]]
             self.gradient_size = num + 1
@@ -1960,15 +1965,21 @@ class Mobject(object):
             self.gradient_size = num
             self.uniforms["gradient_size"] = num
         if not isinstance(radial_gradient, type(None)):
+            if isinstance(radial_gradient[-1], float) or isinstance(radial_gradient[-1], int):
+                radial_gradient[-1] = radial_gradient[0] + radial_gradient[-1]*RIGHT
             self.set_radial_gradient(radial_gradient)
-            self.fill_shader_folder = "quadratic_bezier_fill_g"
-            self.set_opacity(1)        
+        elif not isinstance(gradient_points, type(None)):
+            norm_01 = get_norm(gradient_points[1] - gradient_points[0])
+            self.set_gradient_points(gradient_points + [norm_01*RIGHT], mode)
         else:  
             if isinstance(linear_gradient, type(None)):
                 linear_gradient = [ORIGIN, RIGHT]
             self.set_linear_gradient(linear_gradient)
-            self.fill_shader_folder = "quadratic_bezier_fill_g"
-            self.set_opacity(1)
+        self.fill_shader_folder = "quadratic_bezier_fill_g"
+        self.set_opacity(1)
+        if recursive:
+            for mob in self.submobjects:
+                mob.set_gradient_color(gradient_data, linear_gradient, radial_gradient, gradient_points, recursive)
         # gradient_color_vec4 = [f'vec4({", ".join(map(str, gc))})' for gc in gradient_color]
         return self
     
@@ -1980,10 +1991,19 @@ class Mobject(object):
         return self
     
     def set_radial_gradient(self, radial_gradient):
-        self.radial_gradient = radial_gradient
+        self.gradient_points = radial_gradient
         self.gradient_mode = 2
         self.uniforms["gradient_points"] = [tuple(radial_gradient[i]) for i in range(2)]
         self.uniforms["gradient_mode"] = 2
+        return self
+    
+    def set_gradient_points(self, gradient_points, mode: None|int = 3):
+        if isinstance(mode, type(None)):
+            mode = 3
+        self.gradient_points = gradient_points
+        self.gradient_mode = mode
+        self.uniforms["gradient_points"] = [tuple(point) for point in gradient_points]
+        self.uniforms["gradient_mode"] = mode
         return self
         
     def set_color_by_code(self, glsl_code: str) -> Self:
