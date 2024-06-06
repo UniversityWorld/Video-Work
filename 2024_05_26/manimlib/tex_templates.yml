@@ -25,6 +25,20 @@ default:
     \DisableLigatures{encoding = *, family = * }
     \linespread{1}
 
+tikz:
+  description: ""
+  compiler: latex
+  preamble: |-
+    \def \path {/Users/bowen/Dropbox/Latex/}
+    \def \datafile {code}
+    \usepackage{/Users/bowen/Dropbox/Latex/template/generalstyle}
+    \usepackage{/Users/bowen/Dropbox/Latex/styles/styles/tikzstyle}
+    \usepackage{/Users/bowen/Dropbox/Latex/styles/styles/pycode}
+    \usepackage{/Users/bowen/Dropbox/Latex/styles/styles/istgame}
+    \usepackage{/Users/bowen/Dropbox/Latex/styles/styles/random}
+    \usepackage{/Users/bowen/Dropbox/Latex/styles/styles/command}
+    \usepackage{tikz-3dplot}
+
 ctex:
   description: ""
   compiler: xelatex
