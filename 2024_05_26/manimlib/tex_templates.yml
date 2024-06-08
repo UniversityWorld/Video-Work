@@ -27,7 +27,7 @@ default:
 
 tikz:
   description: ""
-  compiler: xelatex
+  compiler: latex
   preamble: |-
     \def \path {/Users/bowen/Dropbox/Latex/}
     \def \datafile {code}
