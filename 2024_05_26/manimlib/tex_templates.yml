@@ -25,6 +25,33 @@ default:
     \DisableLigatures{encoding = *, family = * }
     \linespread{1}
 
+coloredtex:
+  description: ""
+  compiler: latex
+  preamble: |-
+    \usepackage[english]{babel}
+    \usepackage[utf8]{inputenc}
+    \usepackage[T1]{fontenc}
+    \usepackage{amsmath}
+    \usepackage{amssymb}
+    \usepackage{dsfont}
+    \usepackage{setspace}
+    \usepackage{tipa}
+    \usepackage{relsize}
+    \usepackage{textcomp}
+    \usepackage{mathrsfs}
+    \usepackage{calligra}
+    \usepackage{wasysym}
+    \usepackage{ragged2e}
+    \usepackage{physics}
+    \usepackage[usenames,dvipsnames]{xcolor}
+    \usepackage{microtype}
+    \usepackage{pifont}
+    \DisableLigatures{encoding = *, family = * }
+    \usepackage{CJKutf8}
+    \newcommand{\Chinese}[2][gkai]{\begin{CJK*}{UTF8}{#1}#2\end{CJK*}}
+    \linespread{1}
+
 tikz:
   description: ""
   compiler: latex
