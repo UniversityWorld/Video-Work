@@ -588,6 +588,8 @@ class InteractiveScene(Scene):
         self.remove(self.color_palette)
 
     def on_mouse_motion(self, point: Vect3, d_point: Vect3) -> None:
+        if not hasattr(self, "mouse_point"):
+            return
         super().on_mouse_motion(point, d_point)
         self.crosshair.move_to(self.frame.to_fixed_frame_point(point))
         if self.is_grabbing:

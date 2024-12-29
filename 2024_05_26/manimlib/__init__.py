@@ -1,6 +1,6 @@
 import pkg_resources
 
-__version__ = "econ_scenario_2024_04_18"
+__version__ = "econ_scenario_2024_05_26"
 
 from typing import TYPE_CHECKING
 
