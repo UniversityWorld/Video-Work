@@ -4,7 +4,7 @@ from xml.etree import ElementTree as ET
 
 import numpy as np
 import svgelements as se
-import io
+import io, re
 from pathlib import Path
 
 from manimlib.constants import RIGHT
@@ -125,6 +125,9 @@ class SVGMobject(VMobject):
         )
 
     def mobjects_from_svg_string(self, svg_string: str) -> list[VMobject]:
+        match = re.search(r"<\?xml.*?>", svg_string)
+        if match:
+            svg_string = svg_string[match.start():]
         element_tree = ET.ElementTree(ET.fromstring(svg_string))
         new_tree = self.modify_xml_tree(element_tree)
 
