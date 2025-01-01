@@ -17,24 +17,25 @@ directories:
   # to render videos and to look for svg/png assets. This
   # will specify where those assets live, with a base directory,
   # and various subdirectory names within it
-  base: "/Users/bowen/Documents/Python/Manim/3b1b"
+  base: "/Users/bowen/Documents/Python/Manim"
   subdirs:
     # Where should manim output video and image files?
-    output: "videos"
+    output: "Videos"
     # If you want to use images, manim will look to these folders to find them
-    raster_images: "raster_images"
-    vector_images: "vector_images"
+    raster_images: "Files/images/raster"
+    vector_images: "Files/images/vector"
+    pi_creature_images: "Files/svg_images/pi_creature"
     # If you want to use sounds, manim will look here to find it.
-    sounds: "sounds"
+    sounds: "Files/sounds"
     # Place for other forms of data relevant to any projects, like csv's
-    data: "data"
+    data: "Files/data"
     # When downloading, say an image, where will it go?
     downloads: "downloads"
   # For certain object types, especially Tex and Text, manim will save information
   # to file to prevent the need to re-compute, e.g. recompiling the latex. By default,
   # it stores this saved data to whatever directory appdirs.user_cache_dir("manim") returns,
   # but here a user can specify a different cache location
-  cache: "/Users/bowen/Documents/Python/Manim/3b1b/cache"
+  cache: "/Users/bowen/Documents/Python/Manim/3b1b/cache/2025_01_01"
 window:
   # The position of window on screen. UR -> Upper Right, and likewise DL -> Down and Left,
   # UO would be upper middle, etc.
