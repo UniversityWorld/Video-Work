@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import os
+import os, sys, re
 from diskcache import Cache
 from contextlib import contextmanager
 from functools import wraps
@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 
 
 CACHE_SIZE = 1e9  # 1 Gig
-_cache = Cache(get_cache_dir(), size_limit=CACHE_SIZE)
-
+cache_dir = os.path.join(get_cache_dir(), f"{hash_string(sys.argv[1])}")
+_cache = Cache(cache_dir, size_limit=CACHE_SIZE)
 
 def cache_on_disk(func: Callable[..., T]) -> Callable[..., T]:
     @wraps(func)
@@ -25,6 +25,7 @@ def cache_on_disk(func: Callable[..., T]) -> Callable[..., T]:
         value = _cache.get(key)
         if value is None:
             value = func(*args, **kwargs)
+            value = re.sub(r"^(.*?)<\?xml", "<?xml", value, flags=re.DOTALL)
             _cache.set(key, value)
         return value
     return wrapper
