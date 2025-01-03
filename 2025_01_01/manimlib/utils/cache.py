@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     T = TypeVar('T')
 
-
 CACHE_SIZE = 1e9  # 1 Gig
 cache_dir = os.path.join(get_cache_dir(), f"{hash_string(sys.argv[1])}")
 _cache = Cache(cache_dir, size_limit=CACHE_SIZE)
